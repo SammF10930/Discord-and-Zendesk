@@ -1,3 +1,7 @@
+// Discord-Zendesk Integration Bot
+// GitHub: https://github.com/SammF10930/Discord-and-Zendesk
+// Licensed under MIT
+
 const { Client, Intents } = require('discord.js');
 const axios = require('axios');
 const crypto = require('crypto');
@@ -12,6 +16,7 @@ const client = new Client({
     ],
 });
 
+// Encryption function for message content
 function encrypt(text) {
     const iv = crypto.randomBytes(config.encryption.ivLength);
     const cipher = crypto.createCipheriv(config.encryption.algorithm, config.encryption.secretKey, iv);
@@ -19,17 +24,16 @@ function encrypt(text) {
     return iv.toString('hex') + ':' + encrypted.toString('hex');
 }
 
+// Message handling for Discord messages
 client.on('messageCreate', async (message) => {
-    if (message.author.bot || message.type === 'REPLY') {
-        return;
-    }
+    if (message.author.bot || message.type === 'REPLY') return; 
 
     if (message.channel.id === config.discord.channelId) {
         try {
             const encryptedContent = encrypt(message.content);
             await createZendeskTicket(message.author.username, encryptedContent, message.id);
         } catch (error) {
-            console.error('Error in message handling:', error);
+            console.error('Error handling message:', error);
         }
     } else if (message.channel.isThread()) {
         try {
@@ -45,6 +49,7 @@ client.on('messageCreate', async (message) => {
     }
 });
 
+// Create a Zendesk ticket from a Discord message
 async function createZendeskTicket(username, content, discordMessageId) {
     const zendeskApiUrl = config.zendesk.apiUrl;
     const data = {
@@ -66,12 +71,13 @@ async function createZendeskTicket(username, content, discordMessageId) {
 
     try {
         const response = await axios.post(zendeskApiUrl, data, { headers });
-        console.log('Zendesk ticket created with ID:', response.data.ticket.id);
+        console.log('Zendesk ticket created, ID:', response.data.ticket.id);
     } catch (error) {
-        console.error('Error creating Zendesk Ticket:', error.message);
+        console.error('Error creating Zendesk ticket:', error);
     }
 }
 
+// Update Zendesk ticket with Discord thread ID
 async function updateZendeskTicketWithThreadID(ticketId, threadId) {
     const zendeskApiUrl = `https://${config.zendesk.subdomain}.zendesk.com/api/v2/tickets/${ticketId}.json`;
     const data = {
@@ -89,18 +95,19 @@ async function updateZendeskTicketWithThreadID(ticketId, threadId) {
 
     try {
         await axios.put(zendeskApiUrl, data, { headers });
-        console.log(`Zendesk Ticket ID ${ticketId} updated with Thread ID ${threadId}`);
+        console.log(`Zendesk Ticket updated with Thread ID: ${threadId}`);
     } catch (error) {
-        console.error('Error updating Zendesk Ticket with Discord Thread ID:', error);
+        console.error('Error updating ticket with Thread ID:', error);
     }
 }
 
+// Update Zendesk ticket with a new message from Discord
 async function updateZendeskTicket(ticketId, content, discordUsername) {
     const zendeskApiUrl = `https://${config.zendesk.subdomain}.zendesk.com/api/v2/tickets/${ticketId}.json`;
     const formattedContent = `[From Discord User] ${content}`;
     const data = {
         ticket: {
-            comment: { body: formattedContent, public: false }, // Mark as internal note
+            comment: { body: formattedContent, public: false },
             status: "open"
         }
     };
@@ -112,12 +119,13 @@ async function updateZendeskTicket(ticketId, content, discordUsername) {
 
     try {
         await axios.put(zendeskApiUrl, data, { headers });
-        console.log(`Updated Zendesk Ticket ID ${ticketId} with new internal note from Discord user ${discordUsername}.`);
+        console.log(`Zendesk Ticket updated with new message from Discord user: ${discordUsername}`);
     } catch (error) {
         console.error('Error updating Zendesk Ticket:', error);
     }
 }
 
+// Webhook endpoint to handle responses from Zendesk
 const app = express();
 app.use(express.json());
 
@@ -145,11 +153,13 @@ app.post('/webhook', async (req, res) => {
         console.error('Error processing webhook:', error);
     }
 
-    res.status(200).send('Update received');
+    res.status(200).send('Webhook processed');
 });
 
+// Start the server for webhook handling
 app.listen(config.webhook.serverPort, () => {
-    console.log(`Webhook server running on port ${config.webhook.serverPort}`);
+    console.log(`Server running on port ${config.webhook.serverPort}`);
 });
 
+// Login the bot to Discord
 client.login(config.discord.botToken);
