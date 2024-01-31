@@ -1,0 +1,21 @@
+{
+  "name": "Support'd - Discord / Zendesk",
+  "version": "1.0.0",
+  "description": "A simple bot linking Discord and Zendesk",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js",
+    "dev": "nodemon bot.js"
+  },
+  "author": "Samm Fowler <sammf10930@icloud.com> (https://www.linkedin.com/in/sammf10930/)",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.7",
+    "body-parser": "^1.20.2",
+    "discord.js": "^13.17.1",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
