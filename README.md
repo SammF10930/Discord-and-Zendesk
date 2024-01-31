@@ -1,6 +1,7 @@
 # Discord-Zendesk Integration Bot
 ## Overview:
-Curious about integrating Discord with Zendesk for efficient ticket management while ensuring high user privacy and security? This bot is an exploration into just that, serving as a bridge between Discord messages and Zendesk tickets.
+Curious about integrating Discord with Zendesk for efficient ticket management while ensuring high user privacy and security? 
+This bot is an exploration into just that, serving as a bridge between Discord messages and Zendesk tickets.
 
 ## What This Bot Does:
 This bot turns Discord messages into Zendesk tickets and ensures Zendesk agent responses are relayed back to Discord. It's designed with privacy in mind, encrypting messages before they leave Discord.
@@ -23,16 +24,15 @@ _For Privacy, only Discord usernames are used by the bot, no email address or fu
 2. **Add Webhook (*previously Targets*):**
     - Navigate to Admin > Extensions.
     - Add a new target that will receive webhook calls.
-3. Create Custom Fields:
+3. **Create Custom Fields:**
     - Go to Admin > Ticket Fields.
     - Add custom fields for:
       a. Discord Message ID
       b. Discord Thread ID
-4. Create Trigger:
+4. **Create Trigger:**
     - Go to Admin > Triggers and add a new trigger.
-    - Set conditions like "Ticket is updated" and "Current user is agent".
+    - Set conditions "Ticket is updated" and "Current user is agent".
     - For actions, select "Notify webhook", using the format below:
-json
       ```
       {
         "ticketId": "{{ticket.id}}",
@@ -42,9 +42,9 @@ json
       }
       ```
 ### Local Setup and Testing with ngrok
-1. Install ngrok: Download from ngrok's website and install.
-2. Run ngrok: Expose your local server (e.g., ngrok http 3000).
-3. Copy ngrok URL: Use this as the webhook URL in Zendesk trigger.
+1. **Install ngrok:** Download from ngrok's website and install.
+2. **Run ngrok:** Expose your local server (e.g., ngrok http 3000).
+3. **Copy ngrok URL:** Use this as the webhook URL in Zendesk trigger.
   > [!WARNING]
   > ngrok URLs will change on restart if you're using a free account.
 
